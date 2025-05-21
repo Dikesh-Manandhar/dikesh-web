@@ -1,0 +1,211 @@
+/* Responsive styles for contact section */
+.contact-main {
+  max-width: 1100px;
+  margin: 80px auto 60px auto;
+  padding: 50px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 6px 30px rgba(40, 53, 102, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.contact-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #000000;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+
+.contact-desc {
+  font-size: 1.2rem;
+  color: #000000;
+  margin-bottom: 40px;
+}
+
+.contact-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.contact-photo {
+  flex: 0 0 auto;
+  width: 300px;
+  height: 300px;
+  order: 1;
+}
+
+.contact-photo img {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(40, 53, 102, 0.15);
+  object-fit: cover;
+}
+
+.contact-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  order: 4; /* Place cards to the right */
+}
+
+.contact-card {
+  width: 300px;
+  background: #f9f8fc;
+  border-radius: 16px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 3px 15px rgba(40, 53, 102, 0.07);
+  transition: box-shadow 0.25s ease-in-out, transform 0.25s ease-in-out;
+  cursor: pointer;
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.contact-card:hover {
+  box-shadow: 0 8px 28px rgba(40, 53, 102, 0.15);
+  transform: translateY(-4px);
+  border-color: #e0ddeb;
+}
+
+.contact-icon {
+  font-size: 2.5rem;
+  color: #283566;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.contact-card h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: #000000;
+}
+
+.contact-card p {
+  font-size: 1.1rem;
+  margin: 0 0 6px 0;
+  text-align: left;
+  color: #000000;
+  line-height: 1.5;
+}
+
+.contact-card a {
+  color: #8d5c1e;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.contact-form-container {
+  width: 300px;
+  order: 2; /* Place form below the photo */
+}
+
+.contact-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #f9f8fc;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 3px 15px rgba(40, 53, 102, 0.07);
+}
+
+.contact-form label {
+  font-weight: 600;
+  color: #000000;
+  font-size: 1.05rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #283566;
+  outline: none;
+  box-shadow: 0 0 8px rgba(40, 53, 102, 0.3);
+}
+
+form.contact-form button[type="submit"] {
+  background-color: #283566;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.contact-form button[type="submit"]:hover {
+  background-color: #1f2a4d;
+}
+
+.contact-form button:active {
+  transform: scale(0.98);
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+  .contact-header {
+    flex-direction: row; /* Photo and Cards in a row */
+    align-items: flex-start;
+    flex-wrap: nowrap; /* Prevent wrapping */
+  }
+
+  .contact-photo {
+    width: 300px;
+    height: 300px;
+    margin-right: 40px; /* Spacing between photo and cards */
+  }
+
+  .contact-form-container {
+    width: 300px;
+    order: 3; /* Form below photo */
+    margin-top: 20px; /* Spacing between photo and form */
+  }
+
+  .contact-cards {
+    order: 4; /* Cards to the right of photo and form */
+  }
+}
+
+/* Media query for smaller screens */
+@media (max-width: 767px) {
+  .contact-header {
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+  }
+
+  .contact-photo {
+    margin-bottom: 20px;
+  }
+
+  .contact-cards {
+    align-items: center;
+  }
+}
