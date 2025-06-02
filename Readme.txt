@@ -1,1 +1,2 @@
-THIS IS A portfolio
+Hi, I'm Dikesh – and this is a portfolio
+
