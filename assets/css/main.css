@@ -1278,3 +1278,10 @@ img.portfolio {
   border-radius: 8px;          /* Optional: smooth corners */
   box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Optional: soft shadow */
 }
+.portfolio-filters {
+  position: sticky;
+  top: 70px;
+  z-index: 10;
+  background: #fff;
+  padding: 10px 0;
+}
