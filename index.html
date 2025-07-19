@@ -991,6 +991,9 @@
           </div>
 
           <div class="col-lg-7">
+            
+            <a id="form-success"></a>
+            <div class="sent-message" style="display:none;">Your message has been sent. Thank you!</div>
             <form action="https://formsubmit.co/dikeshmanandhar13@gmail.com" 
             method="POST" 
             class="php-email-form" 
@@ -999,7 +1002,7 @@
             enctype="multipart/form-data">
 
             <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_next" value="https://dikeshmanandhar.com.np">
+            <input type="hidden" name="_next" value="https://dikeshmanandhar.com.np#form-success">
 
               <div class="row gy-4">
 
@@ -1107,6 +1110,12 @@ document.addEventListener('DOMContentLoaded', function () {
     current = (current + 1) % filters.length;
   }, 4000); // Change every 4 seconds
 });
+</script>
+<script>
+if (window.location.hash === "#form-success") {
+  document.querySelector('.sent-message').style.display = "block";
+  window.scrollTo(0, document.querySelector('.sent-message').offsetTop - 100);
+}
 </script>
 </body>
 
