@@ -1,11 +1,3 @@
-/**
-* Template Name: iPortfolio
-* Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
-* Updated: Jun 29 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
 (function() {
   "use strict";
 
@@ -225,5 +217,36 @@
   }
   window.addEventListener('load', navmenuScrollspy);
   document.addEventListener('scroll', navmenuScrollspy);
+
+  window.addEventListener('load', function() {
+    // Certificates auto-filter rotation
+    const certSection = document.querySelector('#certificates');
+    if (!certSection) return;
+    const filterButtons = certSection.querySelectorAll('.portfolio-filters li');
+    const isoContainer = certSection.querySelector('.isotope-container');
+    if (!filterButtons.length || !isoContainer || typeof Isotope === 'undefined') return;
+    const iso = Isotope.data(isoContainer);
+    const filters = [
+      '.filter-featured',
+      '.filter-code',
+      '.filter-debate',
+      '.filter-volunteering',
+      '.filter-sports'
+    ];
+    let current = 0;
+
+    setInterval(() => {
+      isoContainer.classList.add('isotope-fading');
+      setTimeout(() => {
+        filterButtons.forEach(btn => btn.classList.remove('filter-active'));
+        filterButtons[current].classList.add('filter-active');
+        iso.arrange({ filter: filters[current] });
+        setTimeout(() => {
+          isoContainer.classList.remove('isotope-fading');
+        }, 500);
+        current = (current + 1) % filters.length;
+      }, 250);
+    }, 4000);
+  });
 
 })();
