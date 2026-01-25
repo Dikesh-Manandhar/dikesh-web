@@ -64,6 +64,161 @@ header h1 {
     margin-bottom: 30px;
 }
 
+.weekly-section {
+    margin-bottom: 24px;
+}
+
+.weekly-card {
+    background: var(--bg-primary);
+    padding: 22px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    overflow-x: auto;
+}
+
+.weekly-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.weekly-header h2 {
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.weekly-subtitle {
+    color: var(--text-secondary);
+}
+
+.weekly-range {
+    font-weight: 700;
+    color: var(--primary-color);
+    background: var(--bg-secondary);
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.weekly-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 72px;
+}
+
+.weekly-row {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(7, 1fr);
+    gap: 8px;
+    align-items: center;
+    min-width: 760px;
+}
+
+.weekly-header-row {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.weekly-name-cell {
+    background: var(--bg-secondary);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.weekly-day-cell {
+    background: var(--bg-secondary);
+    padding: 10px 8px;
+    border-radius: 10px;
+    text-align: center;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    min-height: 62px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+}
+
+.weekly-day-cell.today {
+    border: 2px solid var(--primary-color);
+}
+
+.weekly-day-cell.future {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.week-day {
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.week-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.weekly-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.weekly-checkbox input {
+    display: none;
+}
+
+.weekly-checkbox span {
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    display: inline-block;
+    background: var(--bg-tertiary);
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.weekly-checkbox input:checked + span {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.weekly-checkbox span::after {
+    content: '\2713';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    font-size: 16px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.weekly-checkbox input:checked + span::after {
+    opacity: 1;
+}
+
+.weekly-empty {
+    background: var(--bg-secondary);
+    border: 1px dashed var(--border-color);
+    padding: 16px;
+    border-radius: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
 .input-group {
     display: flex;
     gap: 12px;
