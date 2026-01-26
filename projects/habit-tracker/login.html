@@ -148,6 +148,20 @@
     </div>
 
     <script>
+        // Get API URL - works in both local and production environments
+        const getApiUrl = () => {
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:3000/api';
+            }
+            
+            const port = window.location.port ? `:${window.location.port}` : '';
+            return `${protocol}//${hostname}${port}/api`.replace(/:$/, '');
+        };
+
+        const API_URL = getApiUrl();
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
         const loginButton = document.getElementById('loginButton');
@@ -163,7 +177,7 @@
             errorMessage.classList.remove('show');
 
             try {
-                const response = await fetch('http://localhost:3000/api/login', {
+                const response = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
