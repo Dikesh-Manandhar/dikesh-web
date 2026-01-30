@@ -1138,7 +1138,8 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
 if (window.location.hash === "#form-success") {
   document.querySelector('.sent-message').style.display = "block";
-  window.scrollTo(0, document.querySelector('.sent-message').offsetTop - 100);
+  // Auto-scroll disabled to allow contacts section to load properly
+  // window.scrollTo(0, document.querySelector('.sent-message').offsetTop - 100);
 }
 </script>
 </body>
