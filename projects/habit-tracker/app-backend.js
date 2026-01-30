@@ -1,10 +1,11 @@
 // Habit Tracker App with Backend Integration
-// Import configuration for API URL
-const API_URL = typeof API_URL !== 'undefined' ? API_URL : (
-    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:3000/api'
-        : `${window.location.protocol}//${window.location.hostname}:${window.location.port || ''}/api`.replace(/:$/, '')
-);
+// Dynamic API URL detection
+const API_URL = (() => {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3000/api';
+    }
+    return `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}/api`;
+})();
 
 class HabitTracker {
     constructor() {
