@@ -171,7 +171,7 @@ class HabitTracker {
     }
 
     generateCalendar(habit) {
-        const days = 90; // Show last 90 days
+        const days = 30; // Show last 30 days
         const today = new Date();
         const calendar = [];
 
@@ -237,7 +237,7 @@ class HabitTracker {
 
                 <div class="calendar-section">
                     <div class="calendar-header">
-                        <div class="calendar-title">Last 90 Days</div>
+                        <div class="calendar-title">Last 30 Days</div>
                     </div>
                     <div class="calendar-grid">
                         ${calendar.map(day => `
