@@ -8,6 +8,10 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 const app = express();
+
+// Trust Railway proxy for rate limiting and IP detection
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
