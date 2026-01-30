@@ -349,19 +349,18 @@ class HabitTracker {
         const calendar = this.generateCalendar(habit);
         const todayStr = this.getDateString(new Date());
         const isTodayCompleted = habit.completedDates.includes(todayStr);
-        const habitId = JSON.stringify(habit.id);
 
         return `
-            <div class="habit-card">
+            <div class="habit-card" data-habit-id="${habit.id}">
                 <div class="habit-header">
                     <h2 class="habit-title">${this.escapeHtml(habit.name)}</h2>
                     <div class="habit-actions">
                         <button class="mark-today-btn ${isTodayCompleted ? 'completed' : ''}" 
-                                onclick="app.markToday(${habitId})"
+                                data-action="mark-today"
                                 ${isTodayCompleted ? 'disabled' : ''}>
                             ${isTodayCompleted ? '✓ Done Today' : 'Mark Today'}
                         </button>
-                        <button class="delete-habit-btn" onclick="app.deleteHabit(${habitId})">
+                        <button class="delete-habit-btn" data-action="delete-habit">
                             Delete
                         </button>
                     </div>
@@ -390,10 +389,12 @@ class HabitTracker {
                     <div class="calendar-header">
                         <div class="calendar-title">Last 90 Days</div>
                     </div>
-                    <div class="calendar-grid">
+                    <div class="calendar-grid" data-habit-id="${habit.id}">
                         ${calendar.map(day => `
                             <div class="day-cell ${day.isCompleted ? 'completed' : ''} ${day.isToday ? 'today' : ''}"
-                                 onclick="app.toggleDate(${habitId}, '${day.dateStr}')">
+                                 data-date="${day.dateStr}"
+                                 role="button"
+                                 tabindex="0">
                                 <span>${day.dayOfMonth}</span>
                                 <div class="tooltip">
                                     ${day.displayDate}${day.isCompleted ? ' ✓' : ''}
@@ -451,7 +452,7 @@ class HabitTracker {
         `;
 
         const habitRows = this.habits.map(habit => `
-            <div class="weekly-row">
+            <div class="weekly-row" data-habit-id="${habit.id}">
                 <div class="weekly-name-cell">${this.escapeHtml(habit.name)}</div>
                 ${days.map(day => {
                     const isDone = habit.completedDates.includes(day.dateStr);
@@ -459,7 +460,7 @@ class HabitTracker {
                     return `
                         <div class="weekly-day-cell ${day.isToday ? 'today' : ''} ${day.isFuture ? 'future' : ''}">
                             <label class="weekly-checkbox">
-                                <input type="checkbox" ${isDone ? 'checked' : ''} ${disabled} onchange="app.toggleDate(${JSON.stringify(habit.id)}, '${day.dateStr}')">
+                                <input type="checkbox" data-date="${day.dateStr}" ${isDone ? 'checked' : ''} ${disabled}>
                                 <span aria-label="Mark ${this.escapeHtml(habit.name)} for ${day.display}"></span>
                             </label>
                         </div>
@@ -483,7 +484,46 @@ class HabitTracker {
         } else {
             emptyState.classList.remove('show');
             container.innerHTML = this.habits.map(habit => this.renderHabitCard(habit)).join('');
+            
+            // Attach event listeners
+            this.attachEventListeners();
         }
+    }
+
+    attachEventListeners() {
+        // Mark today buttons
+        document.querySelectorAll('[data-action="mark-today"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const habitId = e.target.closest('.habit-card').dataset.habitId;
+                this.markToday(habitId);
+            });
+        });
+
+        // Delete buttons
+        document.querySelectorAll('[data-action="delete-habit"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const habitId = e.target.closest('.habit-card').dataset.habitId;
+                this.deleteHabit(habitId);
+            });
+        });
+
+        // Calendar day cells
+        document.querySelectorAll('.day-cell').forEach(cell => {
+            cell.addEventListener('click', (e) => {
+                const habitId = e.target.closest('[data-habit-id]').dataset.habitId;
+                const dateStr = cell.dataset.date;
+                this.toggleDate(habitId, dateStr);
+            });
+        });
+
+        // Weekly checkboxes
+        document.querySelectorAll('.weekly-checkbox input[type="checkbox"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const habitId = e.target.closest('[data-habit-id]').dataset.habitId;
+                const dateStr = input.dataset.date;
+                this.toggleDate(habitId, dateStr);
+            });
+        });
     }
 }
 
