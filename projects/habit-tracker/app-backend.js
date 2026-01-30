@@ -349,6 +349,7 @@ class HabitTracker {
         const calendar = this.generateCalendar(habit);
         const todayStr = this.getDateString(new Date());
         const isTodayCompleted = habit.completedDates.includes(todayStr);
+        const habitId = JSON.stringify(habit.id);
 
         return `
             <div class="habit-card">
@@ -356,11 +357,11 @@ class HabitTracker {
                     <h2 class="habit-title">${this.escapeHtml(habit.name)}</h2>
                     <div class="habit-actions">
                         <button class="mark-today-btn ${isTodayCompleted ? 'completed' : ''}" 
-                                onclick="app.markToday(${habit.id})"
+                                onclick="app.markToday(${habitId})"
                                 ${isTodayCompleted ? 'disabled' : ''}>
                             ${isTodayCompleted ? '✓ Done Today' : 'Mark Today'}
                         </button>
-                        <button class="delete-habit-btn" onclick="app.deleteHabit(${habit.id})">
+                        <button class="delete-habit-btn" onclick="app.deleteHabit(${habitId})">
                             Delete
                         </button>
                     </div>
@@ -392,7 +393,7 @@ class HabitTracker {
                     <div class="calendar-grid">
                         ${calendar.map(day => `
                             <div class="day-cell ${day.isCompleted ? 'completed' : ''} ${day.isToday ? 'today' : ''}"
-                                 onclick="app.toggleDate(${habit.id}, '${day.dateStr}')">
+                                 onclick="app.toggleDate(${habitId}, '${day.dateStr}')">
                                 <span>${day.dayOfMonth}</span>
                                 <div class="tooltip">
                                     ${day.displayDate}${day.isCompleted ? ' ✓' : ''}
@@ -458,7 +459,7 @@ class HabitTracker {
                     return `
                         <div class="weekly-day-cell ${day.isToday ? 'today' : ''} ${day.isFuture ? 'future' : ''}">
                             <label class="weekly-checkbox">
-                                <input type="checkbox" ${isDone ? 'checked' : ''} ${disabled} onchange="app.toggleDate(${habit.id}, '${day.dateStr}')">
+                                <input type="checkbox" ${isDone ? 'checked' : ''} ${disabled} onchange="app.toggleDate(${JSON.stringify(habit.id)}, '${day.dateStr}')">
                                 <span aria-label="Mark ${this.escapeHtml(habit.name)} for ${day.display}"></span>
                             </label>
                         </div>
