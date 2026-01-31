@@ -1097,49 +1097,10 @@
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script>
-// filepath: /workspaces/dikesh-web/index.html
-// Auto-rotate Isotope filters for Certificates section
-
-document.addEventListener('DOMContentLoaded', function () {
-  // Get all filter buttons
-  const filterButtons = document.querySelectorAll(
-    '#certificates .portfolio-filters li'
-  );
-  if (!filterButtons.length) return;
-
-  // Get Isotope instance (assuming it's initialized globally as 'Isotope')
-  let isoContainer = document.querySelector('#certificates .isotope-container');
-  if (!isoContainer || typeof Isotope === 'undefined') return;
-  let iso = Isotope.data(isoContainer);
-
-  // List of filter classes in order
-  const filters = [
-    '.filter-featured',
-    '.filter-code',
-    '.filter-debate',
-    '.filter-volunteering',
-    '.filter-sports'
-  ];
-  let current = 0;
-
-  setInterval(() => {
-    // Remove active class from all
-    filterButtons.forEach(btn => btn.classList.remove('filter-active'));
-    // Add active to current
-    filterButtons[current].classList.add('filter-active');
-    // Filter Isotope
-    iso.arrange({ filter: filters[current] });
-    // Next filter
-    current = (current + 1) % filters.length;
-  }, 4000); // Change every 4 seconds
-});
-</script>
 <script>
 if (window.location.hash === "#form-success") {
   document.querySelector('.sent-message').style.display = "block";
-  // Auto-scroll disabled to allow contacts section to load properly
-  // window.scrollTo(0, document.querySelector('.sent-message').offsetTop - 100);
+  window.scrollTo(0, document.querySelector('.sent-message').offsetTop - 100);
 }
 </script>
 </body>
