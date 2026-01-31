@@ -142,6 +142,10 @@
         filter: filter,
         sortBy: sort
       });
+      // Force layout recalculation to ensure proper page flow
+      setTimeout(() => {
+        initIsotope.layout();
+      }, 100);
     });
 
     isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
