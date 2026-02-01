@@ -10,6 +10,7 @@ const API_URL = (() => {
 class HabitTracker {
     constructor() {
         this.habits = [];
+        this.todos = [];
         this.token = localStorage.getItem('token');
         this.user = JSON.parse(localStorage.getItem('user') || 'null');
         this.init();
@@ -26,6 +27,7 @@ class HabitTracker {
         this.addLogoutButton();
         
         this.setupEventListeners();
+        this.loadTodos();
         await this.loadHabits();
     }
 
@@ -50,12 +52,98 @@ class HabitTracker {
     setupEventListeners() {
         const addBtn = document.getElementById('addHabitBtn');
         const habitInput = document.getElementById('habitInput');
+        const addTodoBtn = document.getElementById('addTodoBtn');
+        const todoInput = document.getElementById('todoInput');
 
         addBtn.addEventListener('click', () => this.addHabit());
         habitInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.addHabit();
         });
+
+        addTodoBtn.addEventListener('click', () => this.addTodo());
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.addTodo();
+        });
     }
+
+    // Todo methods
+    loadTodos() {
+        const stored = localStorage.getItem('todos');
+        this.todos = stored ? JSON.parse(stored) : [];
+        this.renderTodos();
+    }
+
+    saveTodos() {
+        localStorage.setItem('todos', JSON.stringify(this.todos));
+    }
+
+    addTodo() {
+        const input = document.getElementById('todoInput');
+        const text = input.value.trim();
+
+        if (!text) {
+            alert('Please enter a todo');
+            return;
+        }
+
+        const todo = {
+            id: Date.now(),
+            text: text,
+            completed: false,
+            createdAt: new Date().toISOString()
+        };
+
+        this.todos.push(todo);
+        this.saveTodos();
+        input.value = '';
+        this.renderTodos();
+    }
+
+    toggleTodo(id) {
+        const todo = this.todos.find(t => t.id === id);
+        if (todo) {
+            todo.completed = !todo.completed;
+            this.saveTodos();
+            this.renderTodos();
+        }
+    }
+
+    deleteTodo(id) {
+        this.todos = this.todos.filter(t => t.id !== id);
+        this.saveTodos();
+        this.renderTodos();
+    }
+
+    renderTodoItem(todo) {
+        return `
+            <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                <div class="todo-checkbox">
+                    <input type="checkbox" id="todo-${todo.id}" ${todo.completed ? 'checked' : ''} 
+                           onchange="app.toggleTodo(${todo.id})">
+                    <label for="todo-${todo.id}">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <span class="todo-text">${this.escapeHtml(todo.text)}</span>
+                <button class="todo-delete-btn" onclick="app.deleteTodo(${todo.id})">×</button>
+            </div>
+        `;
+    }
+
+    renderTodos() {
+        const todoContainer = document.getElementById('todoList');
+        const todoEmpty = document.getElementById('todoEmpty');
+
+        if (this.todos.length === 0) {
+            todoContainer.innerHTML = '';
+            todoEmpty.classList.add('show');
+        } else {
+            todoEmpty.classList.remove('show');
+            todoContainer.innerHTML = this.todos.map(todo => this.renderTodoItem(todo)).join('');
+        }
+    }
+
+    // Habit methods
 
     async loadHabits() {
         try {
