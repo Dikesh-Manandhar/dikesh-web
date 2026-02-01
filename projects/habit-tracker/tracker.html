@@ -37,6 +37,28 @@
             <!-- Habits will be dynamically added here -->
         </section>
 
+        <section class="todo-section">
+            <div class="todo-card">
+                <div class="todo-header">
+                    <h2>📋 My Todo List</h2>
+                    <p class="todo-subtitle">Quick tasks and goals for today</p>
+                </div>
+                
+                <div class="todo-input-group">
+                    <input type="text" id="todoInput" placeholder="Add a todo (e.g., Finish project, Call dentist)" maxlength="60">
+                    <button id="addTodoBtn">Add Todo</button>
+                </div>
+
+                <div id="todoList" class="todo-list">
+                    <!-- Todos will be dynamically added here -->
+                </div>
+
+                <div class="todo-empty" id="todoEmpty">
+                    <p>No todos yet. Add one to get started! 🚀</p>
+                </div>
+            </div>
+        </section>
+
         <div class="empty-state" id="emptyState">
             <div class="empty-icon">📝</div>
             <h3>No habits yet</h3>
