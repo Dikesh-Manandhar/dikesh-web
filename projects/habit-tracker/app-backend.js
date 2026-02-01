@@ -55,30 +55,81 @@ class HabitTracker {
         const addTodoBtn = document.getElementById('addTodoBtn');
         const todoInput = document.getElementById('todoInput');
 
-        addBtn.addEventListener('click', () => this.addHabit());
-        habitInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.addHabit();
-        });
+        if (addBtn) {
+            addBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.addHabit();
+            });
+        }
+        
+        if (habitInput) {
+            habitInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.addHabit();
+                }
+            });
+        }
 
-        addTodoBtn.addEventListener('click', () => this.addTodo());
-        todoInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.addTodo();
-        });
+        if (addTodoBtn) {
+            addTodoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.addTodo();
+            });
+        }
+        
+        if (todoInput) {
+            todoInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.addTodo();
+                }
+            });
+        }
     }
 
     // Todo methods
+    isLocalStorageAvailable() {
+        try {
+            const test = '__localStorage_test__';
+            localStorage.setItem(test, test);
+            localStorage.removeItem(test);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
     loadTodos() {
-        const stored = localStorage.getItem('todos');
-        this.todos = stored ? JSON.parse(stored) : [];
+        try {
+            if (this.isLocalStorageAvailable()) {
+                const stored = localStorage.getItem('todos');
+                this.todos = stored ? JSON.parse(stored) : [];
+            } else {
+                console.warn('localStorage not available, using in-memory storage');
+                this.todos = this.todos || [];
+            }
+        } catch (error) {
+            console.error('Error loading todos:', error);
+            this.todos = [];
+        }
         this.renderTodos();
     }
 
     saveTodos() {
-        localStorage.setItem('todos', JSON.stringify(this.todos));
+        try {
+            if (this.isLocalStorageAvailable()) {
+                localStorage.setItem('todos', JSON.stringify(this.todos));
+            }
+        } catch (error) {
+            console.error('Error saving todos:', error);
+        }
     }
 
     addTodo() {
         const input = document.getElementById('todoInput');
+        if (!input) return;
+        
         const text = input.value.trim();
 
         if (!text) {
