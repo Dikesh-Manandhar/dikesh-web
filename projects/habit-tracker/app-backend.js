@@ -89,44 +89,39 @@ class HabitTracker {
     }
 
     // Todo methods
-    isLocalStorageAvailable() {
+    async loadTodos() {
         try {
-            const test = '__localStorage_test__';
-            localStorage.setItem(test, test);
-            localStorage.removeItem(test);
-            return true;
-        } catch (e) {
-            return false;
-        }
-    }
+            const response = await fetch(`${API_URL}/todos`, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                },
+                credentials: 'include'
+            });
 
-    loadTodos() {
-        try {
-            if (this.isLocalStorageAvailable()) {
-                const stored = localStorage.getItem('todos');
-                this.todos = stored ? JSON.parse(stored) : [];
+            if (response.status === 401 || response.status === 403) {
+                this.logout();
+                return;
+            }
+
+            if (response.ok) {
+                const data = await response.json();
+                this.todos = data.todos.map(t => ({
+                    id: t.id,
+                    text: t.text,
+                    completed: t.completed || false,
+                    createdAt: t.created_at
+                }));
             } else {
-                console.warn('localStorage not available, using in-memory storage');
-                this.todos = this.todos || [];
+                this.todos = [];
             }
         } catch (error) {
-            console.error('Error loading todos:', error);
+            console.error('Failed to load todos:', error);
             this.todos = [];
         }
         this.renderTodos();
     }
 
-    saveTodos() {
-        try {
-            if (this.isLocalStorageAvailable()) {
-                localStorage.setItem('todos', JSON.stringify(this.todos));
-            }
-        } catch (error) {
-            console.error('Error saving todos:', error);
-        }
-    }
-
-    addTodo() {
+    async addTodo() {
         const input = document.getElementById('todoInput');
         if (!input) return;
         
@@ -137,32 +132,78 @@ class HabitTracker {
             return;
         }
 
-        const todo = {
-            id: Date.now(),
-            text: text,
-            completed: false,
-            createdAt: new Date().toISOString()
-        };
+        try {
+            const response = await fetch(`${API_URL}/todos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                credentials: 'include',
+                body: JSON.stringify({ text, completed: false })
+            });
 
-        this.todos.push(todo);
-        this.saveTodos();
-        input.value = '';
-        this.renderTodos();
-    }
-
-    toggleTodo(id) {
-        const todo = this.todos.find(t => t.id === id);
-        if (todo) {
-            todo.completed = !todo.completed;
-            this.saveTodos();
-            this.renderTodos();
+            if (response.ok) {
+                const data = await response.json();
+                this.todos.push({
+                    id: data.todo.id,
+                    text: data.todo.text,
+                    completed: data.todo.completed || false,
+                    createdAt: data.todo.created_at || new Date().toISOString()
+                });
+                input.value = '';
+                this.renderTodos();
+            } else {
+                const error = await response.json();
+                alert(error.error || 'Failed to create todo');
+            }
+        } catch (error) {
+            console.error('Failed to add todo:', error);
+            alert('Failed to add todo. Please check your connection.');
         }
     }
 
-    deleteTodo(id) {
-        this.todos = this.todos.filter(t => t.id !== id);
-        this.saveTodos();
-        this.renderTodos();
+    async toggleTodo(id) {
+        const todo = this.todos.find(t => t.id === id);
+        if (!todo) return;
+
+        try {
+            const response = await fetch(`${API_URL}/todos/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                credentials: 'include',
+                body: JSON.stringify({ completed: !todo.completed })
+            });
+
+            if (response.ok) {
+                todo.completed = !todo.completed;
+                this.renderTodos();
+            }
+        } catch (error) {
+            console.error('Failed to toggle todo:', error);
+        }
+    }
+
+    async deleteTodo(id) {
+        try {
+            const response = await fetch(`${API_URL}/todos/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                },
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                this.todos = this.todos.filter(t => t.id !== id);
+                this.renderTodos();
+            }
+        } catch (error) {
+            console.error('Failed to delete todo:', error);
+        }
     }
 
     renderTodoItem(todo) {

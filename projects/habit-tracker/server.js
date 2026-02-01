@@ -30,7 +30,8 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 let data = {
   users: [],
   habits: [],
-  completions: []
+  completions: [],
+  todos: []
 };
 
 async function loadData() {
@@ -270,6 +271,73 @@ app.post('/api/habits/:id/toggle', authenticateToken, async (req, res) => {
   });
   await saveData();
   return res.json({ message: 'Completion added', completed: true });
+});
+
+// Todo endpoints
+app.get('/api/todos', authenticateToken, (req, res) => {
+  const userTodos = data.todos.filter(t => t.userId === req.userId);
+  res.json({ todos: userTodos });
+});
+
+app.post('/api/todos', authenticateToken, async (req, res) => {
+  const { text, completed } = req.body;
+
+  if (!text || !text.trim()) {
+    return res.status(400).json({ error: 'Todo text is required' });
+  }
+
+  try {
+    const todo = {
+      id: data.todos.length + 1,
+      userId: req.userId,
+      text: text.trim(),
+      completed: completed || false,
+      created_at: new Date().toISOString()
+    };
+
+    data.todos.push(todo);
+    await saveData();
+
+    res.json({
+      message: 'Todo created',
+      todo: todo
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create todo' });
+  }
+});
+
+app.put('/api/todos/:id', authenticateToken, async (req, res) => {
+  const todoId = parseInt(req.params.id, 10);
+  const { completed } = req.body;
+
+  const todo = data.todos.find(t => t.id === todoId && t.userId === req.userId);
+
+  if (!todo) {
+    return res.status(404).json({ error: 'Todo not found' });
+  }
+
+  try {
+    todo.completed = completed;
+    await saveData();
+    res.json({ message: 'Todo updated', todo: todo });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update todo' });
+  }
+});
+
+app.delete('/api/todos/:id', authenticateToken, async (req, res) => {
+  const todoId = parseInt(req.params.id, 10);
+
+  const todoIndex = data.todos.findIndex(t => t.id === todoId && t.userId === req.userId);
+
+  if (todoIndex === -1) {
+    return res.status(404).json({ error: 'Todo not found' });
+  }
+
+  data.todos.splice(todoIndex, 1);
+  await saveData();
+  res.json({ message: 'Todo deleted' });
 });
 
 loadData().then(() => {
