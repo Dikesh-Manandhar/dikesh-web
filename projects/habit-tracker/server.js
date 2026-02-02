@@ -49,11 +49,19 @@ async function saveData() {
 
 const corsOptions = {
   origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
+    // Allow all origins in development
+    if (!isProduction) return callback(null, true);
+    // In production, check against allowed origins
     if (SAFE_ORIGINS.includes(origin)) return callback(null, true);
     return callback(new Error('Not allowed by CORS'));
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie'],
+  maxAge: 86400 // 24 hours
 };
 
 app.use(cors(corsOptions));

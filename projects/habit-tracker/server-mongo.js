@@ -37,11 +37,19 @@ const cookieSecure = isProduction || process.env.COOKIE_SECURE === 'true';
 
 const corsOptions = {
   origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
+    // Allow all origins in development
+    if (!isProduction) return callback(null, true);
+    // In production, check against allowed origins
     if (SAFE_ORIGINS.includes(origin)) return callback(null, true);
     return callback(new Error('Not allowed by CORS'));
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie'],
+  maxAge: 86400 // 24 hours
 };
 
 app.use(cors(corsOptions));
@@ -112,9 +120,20 @@ const completionSchema = new mongoose.Schema(
 
 completionSchema.index({ habitId: 1, date: 1 }, { unique: true });
 
+const todoSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    text: { type: String, required: true, trim: true },
+    completed: { type: Boolean, default: false },
+    created_at: { type: Date, default: Date.now }
+  },
+  { versionKey: false }
+);
+
 const User = mongoose.model('User', userSchema);
 const Habit = mongoose.model('Habit', habitSchema);
 const Completion = mongoose.model('Completion', completionSchema);
+const Todo = mongoose.model('Todo', todoSchema);
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -310,6 +329,101 @@ app.post('/api/habits/:id/toggle', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Toggle completion error:', error.message);
     res.status(500).json({ error: 'Failed to toggle completion' });
+  }
+});
+
+// Todo endpoints
+app.get('/api/todos', authenticateToken, async (req, res) => {
+  try {
+    const todos = await Todo.find({ userId: req.userId }).sort({ created_at: -1 });
+    res.json({ todos });
+  } catch (error) {
+    console.error('Get todos error:', error.message);
+    res.status(500).json({ error: 'Failed to load todos' });
+  }
+});
+
+app.post('/api/todos', authenticateToken, async (req, res) => {
+  const { text, completed } = req.body;
+
+  if (!text || !text.trim()) {
+    return res.status(400).json({ error: 'Todo text is required' });
+  }
+
+  try {
+    const todo = await Todo.create({
+      userId: req.userId,
+      text: text.trim(),
+      completed: completed || false
+    });
+
+    res.json({
+      message: 'Todo created',
+      todo: {
+        id: todo._id,
+        text: todo.text,
+        completed: todo.completed,
+        created_at: todo.created_at
+      }
+    });
+  } catch (error) {
+    console.error('Create todo error:', error.message);
+    res.status(500).json({ error: 'Failed to create todo' });
+  }
+});
+
+app.put('/api/todos/:id', authenticateToken, async (req, res) => {
+  const todoId = req.params.id;
+  const { completed } = req.body;
+
+  if (!isValidObjectId(todoId)) {
+    return res.status(400).json({ error: 'Invalid todo ID' });
+  }
+
+  try {
+    const todo = await Todo.findOneAndUpdate(
+      { _id: todoId, userId: req.userId },
+      { completed },
+      { new: true }
+    );
+
+    if (!todo) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+
+    res.json({
+      message: 'Todo updated',
+      todo: {
+        id: todo._id,
+        text: todo.text,
+        completed: todo.completed,
+        created_at: todo.created_at
+      }
+    });
+  } catch (error) {
+    console.error('Update todo error:', error.message);
+    res.status(500).json({ error: 'Failed to update todo' });
+  }
+});
+
+app.delete('/api/todos/:id', authenticateToken, async (req, res) => {
+  const todoId = req.params.id;
+
+  if (!isValidObjectId(todoId)) {
+    return res.status(400).json({ error: 'Invalid todo ID' });
+  }
+
+  try {
+    const todo = await Todo.findOneAndDelete({ _id: todoId, userId: req.userId });
+
+    if (!todo) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+
+    res.json({ message: 'Todo deleted' });
+  } catch (error) {
+    console.error('Delete todo error:', error.message);
+    res.status(500).json({ error: 'Failed to delete todo' });
   }
 });
 
