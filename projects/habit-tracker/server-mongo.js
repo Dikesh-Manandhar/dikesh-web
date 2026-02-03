@@ -336,7 +336,13 @@ app.post('/api/habits/:id/toggle', authenticateToken, async (req, res) => {
 app.get('/api/todos', authenticateToken, async (req, res) => {
   try {
     const todos = await Todo.find({ userId: req.userId }).sort({ created_at: -1 });
-    res.json({ todos });
+    const mappedTodos = todos.map(todo => ({
+      id: todo._id.toString(),
+      text: todo.text,
+      completed: todo.completed,
+      created_at: todo.created_at
+    }));
+    res.json({ todos: mappedTodos });
   } catch (error) {
     console.error('Get todos error:', error.message);
     res.status(500).json({ error: 'Failed to load todos' });
@@ -360,7 +366,7 @@ app.post('/api/todos', authenticateToken, async (req, res) => {
     res.json({
       message: 'Todo created',
       todo: {
-        id: todo._id,
+        id: todo._id.toString(),
         text: todo.text,
         completed: todo.completed,
         created_at: todo.created_at
@@ -394,7 +400,7 @@ app.put('/api/todos/:id', authenticateToken, async (req, res) => {
     res.json({
       message: 'Todo updated',
       todo: {
-        id: todo._id,
+        id: todo._id.toString(),
         text: todo.text,
         completed: todo.completed,
         created_at: todo.created_at

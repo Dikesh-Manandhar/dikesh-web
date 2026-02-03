@@ -106,7 +106,7 @@ class HabitTracker {
             if (response.ok) {
                 const data = await response.json();
                 this.todos = data.todos.map(t => ({
-                    id: t.id,
+                    id: t.id || t._id,
                     text: t.text,
                     completed: t.completed || false,
                     createdAt: t.created_at
