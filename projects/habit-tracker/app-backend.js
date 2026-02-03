@@ -99,24 +99,40 @@ class HabitTracker {
             });
 
             if (response.status === 401 || response.status === 403) {
+            this.attachTodoEventListeners();
                 this.logout();
                 return;
             }
 
             if (response.ok) {
-                const data = await response.json();
-                this.todos = data.todos.map(t => ({
-                    id: t.id || t._id,
-                    text: t.text,
-                    completed: t.completed || false,
-                    createdAt: t.created_at
-                }));
-            } else {
-                this.todos = [];
-            }
-        } catch (error) {
+            <div class="todo-item ${todo.completed ? 'completed' : ''}" data-todo-id="${todo.id}">
+                <div class="todo-checkbox">
+                    <input type="checkbox" id="todo-${todo.id}" ${todo.completed ? 'checked' : ''} data-action="toggle-todo">
+                    <label for="todo-${todo.id}">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <span class="todo-text">${this.escapeHtml(todo.text)}</span>
+                <button class="todo-delete-btn" type="button" data-action="delete-todo">×</button>
+            </div>
             console.error('Failed to load todos:', error);
             this.todos = [];
+
+    attachTodoEventListeners() {
+        document.querySelectorAll('[data-action="toggle-todo"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const todoId = e.target.closest('.todo-item').dataset.todoId;
+                this.toggleTodo(todoId);
+            });
+        });
+
+        document.querySelectorAll('[data-action="delete-todo"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const todoId = e.target.closest('.todo-item').dataset.todoId;
+                this.deleteTodo(todoId);
+            });
+        });
+    }
         }
         this.renderTodos();
     }
