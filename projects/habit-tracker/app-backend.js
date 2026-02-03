@@ -99,40 +99,24 @@ class HabitTracker {
             });
 
             if (response.status === 401 || response.status === 403) {
-            this.attachTodoEventListeners();
                 this.logout();
                 return;
             }
 
             if (response.ok) {
-            <div class="todo-item ${todo.completed ? 'completed' : ''}" data-todo-id="${todo.id}">
-                <div class="todo-checkbox">
-                    <input type="checkbox" id="todo-${todo.id}" ${todo.completed ? 'checked' : ''} data-action="toggle-todo">
-                    <label for="todo-${todo.id}">
-                        <span class="checkmark"></span>
-                    </label>
-                </div>
-                <span class="todo-text">${this.escapeHtml(todo.text)}</span>
-                <button class="todo-delete-btn" type="button" data-action="delete-todo">×</button>
-            </div>
+                const data = await response.json();
+                this.todos = data.todos.map(t => ({
+                    id: String(t.id || t._id),
+                    text: t.text,
+                    completed: t.completed || false,
+                    createdAt: t.created_at
+                }));
+            } else {
+                this.todos = [];
+            }
+        } catch (error) {
             console.error('Failed to load todos:', error);
             this.todos = [];
-
-    attachTodoEventListeners() {
-        document.querySelectorAll('[data-action="toggle-todo"]').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const todoId = e.target.closest('.todo-item').dataset.todoId;
-                this.toggleTodo(todoId);
-            });
-        });
-
-        document.querySelectorAll('[data-action="delete-todo"]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const todoId = e.target.closest('.todo-item').dataset.todoId;
-                this.deleteTodo(todoId);
-            });
-        });
-    }
         }
         this.renderTodos();
     }
@@ -140,7 +124,7 @@ class HabitTracker {
     async addTodo() {
         const input = document.getElementById('todoInput');
         if (!input) return;
-        
+
         const text = input.value.trim();
 
         if (!text) {
@@ -162,7 +146,7 @@ class HabitTracker {
             if (response.ok) {
                 const data = await response.json();
                 this.todos.push({
-                    id: data.todo.id,
+                    id: String(data.todo.id || data.todo._id),
                     text: data.todo.text,
                     completed: data.todo.completed || false,
                     createdAt: data.todo.created_at || new Date().toISOString()
@@ -180,11 +164,12 @@ class HabitTracker {
     }
 
     async toggleTodo(id) {
-        const todo = this.todos.find(t => t.id === id);
+        const todoId = String(id);
+        const todo = this.todos.find(t => t.id === todoId);
         if (!todo) return;
 
         try {
-            const response = await fetch(`${API_URL}/todos/${id}`, {
+            const response = await fetch(`${API_URL}/todos/${todoId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -204,8 +189,9 @@ class HabitTracker {
     }
 
     async deleteTodo(id) {
+        const todoId = String(id);
         try {
-            const response = await fetch(`${API_URL}/todos/${id}`, {
+            const response = await fetch(`${API_URL}/todos/${todoId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${this.token}`
@@ -214,7 +200,7 @@ class HabitTracker {
             });
 
             if (response.ok) {
-                this.todos = this.todos.filter(t => t.id !== id);
+                this.todos = this.todos.filter(t => t.id !== todoId);
                 this.renderTodos();
             }
         } catch (error) {
@@ -224,16 +210,15 @@ class HabitTracker {
 
     renderTodoItem(todo) {
         return `
-            <div class="todo-item ${todo.completed ? 'completed' : ''}">
+            <div class="todo-item ${todo.completed ? 'completed' : ''}" data-todo-id="${todo.id}">
                 <div class="todo-checkbox">
-                    <input type="checkbox" id="todo-${todo.id}" ${todo.completed ? 'checked' : ''} 
-                           onchange="app.toggleTodo(${todo.id})">
+                    <input type="checkbox" id="todo-${todo.id}" ${todo.completed ? 'checked' : ''} data-action="toggle-todo">
                     <label for="todo-${todo.id}">
                         <span class="checkmark"></span>
                     </label>
                 </div>
                 <span class="todo-text">${this.escapeHtml(todo.text)}</span>
-                <button class="todo-delete-btn" onclick="app.deleteTodo(${todo.id})">×</button>
+                <button class="todo-delete-btn" type="button" data-action="delete-todo">×</button>
             </div>
         `;
     }
@@ -248,7 +233,24 @@ class HabitTracker {
         } else {
             todoEmpty.classList.remove('show');
             todoContainer.innerHTML = this.todos.map(todo => this.renderTodoItem(todo)).join('');
+            this.attachTodoEventListeners();
         }
+    }
+
+    attachTodoEventListeners() {
+        document.querySelectorAll('[data-action="toggle-todo"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const todoId = e.target.closest('.todo-item').dataset.todoId;
+                this.toggleTodo(todoId);
+            });
+        });
+
+        document.querySelectorAll('[data-action="delete-todo"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const todoId = e.target.closest('.todo-item').dataset.todoId;
+                this.deleteTodo(todoId);
+            });
+        });
     }
 
     // Habit methods
