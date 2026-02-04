@@ -4,11 +4,28 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Dikesh Manandhar | Computer Engineer & Developer</title>
   <meta name="description" content="Welcome to the official site of Dikesh Manandhar, a passionate Computer Engineering student, frontend developer, and AI enthusiast.">
-
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <meta name="keywords" content="Dikesh Manandhar, Developer, Computer Engineer, Frontend Developer, AI Enthusiast">
+  
+  <!-- Open Graph Meta Tags for Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dikeshmanandhar.com.np">
+  <meta property="og:title" content="Dikesh Manandhar | Computer Engineer & Developer">
+  <meta property="og:description" content="Welcome to the official site of Dikesh Manandhar, a passionate Computer Engineering student, frontend developer, and AI enthusiast.">
+  <meta property="og:image" content="https://dikeshmanandhar.com.np/assets/img/my-profile-img.jpg">
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://dikeshmanandhar.com.np">
+  <meta property="twitter:title" content="Dikesh Manandhar | Computer Engineer & Developer">
+  <meta property="twitter:description" content="Welcome to the official site of Dikesh Manandhar, a passionate Computer Engineering student, frontend developer, and AI enthusiast.">
+  <meta property="twitter:image" content="https://dikeshmanandhar.com.np/assets/img/my-profile-img.jpg">
+  
+  <!-- Additional compatibility headers -->
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
@@ -1022,7 +1039,7 @@
                   <p>dikeshmanandhar13@gmail.com</p>
                 </div>
               </div><!-- End Info Item -->
-              <iframe src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d2996.529950665058!2d85.28512589788919!3d27.71414338857409!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e1!3m2!1sen!2sus!4v1746150771503!5m2!1sen!2sus"  frameborder="0" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              <iframe src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d2996.529950665058!2d85.28512589788919!3d27.71414338857409!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e1!3m2!1sen!2sus!4v1746150771503!5m2!1sen!2sus" frameborder="0" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Google Maps - Dikesh Manandhar Location"></iframe>
              </div>
           </div>
 
@@ -1035,10 +1052,13 @@
             class="php-email-form" 
             data-aos="fade-up" 
             data-aos-delay="200"
-            enctype="multipart/form-data">
+            enctype="multipart/form-data"
+            accept-charset="UTF-8">
 
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_next" value="https://dikeshmanandhar.com.np#form-success">
+            <input type="hidden" name="_subject" value="New Contact Form Submission">
+            <input type="hidden" name="_template" value="table">
 
               <div class="row gy-4">
 
@@ -1110,10 +1130,34 @@
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 <script>
+// Handle form success message
 if (window.location.hash === "#form-success") {
   document.querySelector('.sent-message').style.display = "block";
   window.scrollTo(0, document.querySelector('.sent-message').offsetTop - 100);
 }
+
+// Enhanced form submission for in-app browsers
+document.addEventListener('DOMContentLoaded', function() {
+  const contactForm = document.querySelector('.php-email-form');
+  
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+      // Disable default submit briefly to allow detection of in-app browsers
+      const isInAppBrowser = /FBAN|FBAV|Instagram|LinkedIn|Twitter|WhatsApp|WeChat|QQ/.test(navigator.userAgent);
+      
+      if (isInAppBrowser) {
+        // Add slight delay for in-app browsers to process
+        e.preventDefault();
+        const formData = new FormData(contactForm);
+        
+        // Submit the form after a short delay
+        setTimeout(() => {
+          contactForm.submit();
+        }, 100);
+      }
+    });
+  }
+});
 </script>
 </body>
 
