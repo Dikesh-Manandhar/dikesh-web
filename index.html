@@ -161,7 +161,6 @@
               </div>
               <div class="col-lg-6">
                 <ul>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Age:</strong> <span>18</span></li>
                   <li><i class="bi bi-chevron-right"></i> <strong>Degree:</strong> <span>Bachelor's running</span></li>
                   <li><i class="bi bi-chevron-right"></i> <strong>Email:</strong> <span>dikeshmanandhar13@gmail.com</span></li>
                   <li><i class="bi bi-chevron-right"></i> <strong>Freelance:</strong> <span>Available</span></li>
@@ -1039,13 +1038,22 @@
                   <p>dikeshmanandhar13@gmail.com</p>
                 </div>
               </div><!-- End Info Item -->
-              <iframe src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d2996.529950665058!2d85.28512589788919!3d27.71414338857409!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e1!3m2!1sen!2sus!4v1746150771503!5m2!1sen!2sus" frameborder="0" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Google Maps - Dikesh Manandhar Location"></iframe>
+              <div class="contact-map">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d2996.529950665058!2d85.28512589788919!3d27.71414338857409!3m2!1i1024!2i768!4f13.1!3m2!1m1!2s!5e1!3m2!1sen!2sus!4v1746150771503!5m2!1sen!2sus" frameborder="0" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Google Maps - Dikesh Manandhar Location"></iframe>
+                <div class="map-fallback" hidden>
+                  <p>Map preview is blocked in some in-app browsers.</p>
+                  <a class="map-button" href="https://maps.google.com/?q=27.71414338857409,85.28512589788919" target="_blank" rel="noopener">Open in Google Maps</a>
+                </div>
+              </div>
              </div>
           </div>
 
           <div class="col-lg-7">
             
             <a id="form-success"></a>
+            <div class="inapp-notice" hidden>
+              You're viewing this page inside an in-app browser. If the form or map doesn't load, please open in your default browser.
+            </div>
             <div class="sent-message" style="display:none;">Your message has been sent. Thank you!</div>
             <form action="https://formsubmit.co/dikeshmanandhar13@gmail.com" 
             method="POST" 
@@ -1139,12 +1147,25 @@ if (window.location.hash === "#form-success") {
 // Enhanced form submission for in-app browsers
 document.addEventListener('DOMContentLoaded', function() {
   const contactForm = document.querySelector('.php-email-form');
+  const isInAppBrowser = /FBAN|FBAV|Instagram|LinkedIn|Twitter|WhatsApp|WeChat|QQ/.test(navigator.userAgent);
+  const inAppNotice = document.querySelector('.inapp-notice');
+  const mapFallback = document.querySelector('.map-fallback');
+  const mapFrame = document.querySelector('.contact-map iframe');
+
+  if (isInAppBrowser && inAppNotice) {
+    inAppNotice.hidden = false;
+  }
+
+  if (isInAppBrowser && mapFallback) {
+    mapFallback.hidden = false;
+    if (mapFrame) {
+      mapFrame.style.display = 'none';
+    }
+  }
   
   if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
       // Disable default submit briefly to allow detection of in-app browsers
-      const isInAppBrowser = /FBAN|FBAV|Instagram|LinkedIn|Twitter|WhatsApp|WeChat|QQ/.test(navigator.userAgent);
-      
       if (isInAppBrowser) {
         // Add slight delay for in-app browsers to process
         e.preventDefault();

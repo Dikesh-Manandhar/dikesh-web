@@ -1082,6 +1082,42 @@ section,
   color: var(--contrast-color);
 }
 
+.contact .contact-map {
+  margin-top: 20px;
+}
+
+.contact .map-fallback {
+  background: var(--surface-color);
+  border: 1px dashed color-mix(in srgb, var(--default-color), transparent 70%);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.contact .map-fallback p {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.contact .map-button {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.contact .inapp-notice {
+  background: color-mix(in srgb, var(--accent-color), transparent 90%);
+  border-left: 4px solid var(--accent-color);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
 .contact .php-email-form {
   background-color: var(--surface-color);
   height: 100%;
