@@ -1138,10 +1138,18 @@
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 <script>
+// Force HTTPS in production to avoid insecure warnings in in-app browsers
+if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  location.replace('https://' + location.host + location.pathname + location.search + location.hash);
+}
+
 // Handle form success message
 if (window.location.hash === "#form-success") {
-  document.querySelector('.sent-message').style.display = "block";
-  window.scrollTo(0, document.querySelector('.sent-message').offsetTop - 100);
+  const sentMessage = document.querySelector('.sent-message');
+  if (sentMessage) {
+    sentMessage.style.display = "block";
+    window.scrollTo(0, sentMessage.offsetTop - 100);
+  }
 }
 
 // Enhanced form submission for in-app browsers
@@ -1165,13 +1173,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
-      // Disable default submit briefly to allow detection of in-app browsers
       if (isInAppBrowser) {
-        // Add slight delay for in-app browsers to process
         e.preventDefault();
-        const formData = new FormData(contactForm);
-        
-        // Submit the form after a short delay
         setTimeout(() => {
           contactForm.submit();
         }, 100);

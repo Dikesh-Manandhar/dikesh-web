@@ -182,8 +182,39 @@
 
   window.addEventListener("load", initSwiper);
 
-  /**
-   * Correct scrolling position upon page load for URLs containing hash links.
+  /**   * Force layout refresh for in-app browsers after load.
+   */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.isotope-layout').forEach((isotopeItem) => {
+        const container = isotopeItem.querySelector('.isotope-container');
+        if (!container || typeof Isotope === 'undefined') return;
+        let iso = Isotope.data(container);
+        if (!iso) {
+          const layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
+          const filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
+          const sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
+          iso = new Isotope(container, {
+            itemSelector: '.isotope-item',
+            layoutMode: layout,
+            filter: filter,
+            sortBy: sort
+          });
+        }
+        iso.layout();
+      });
+
+      if (typeof AOS !== 'undefined') {
+        if (typeof AOS.refreshHard === 'function') {
+          AOS.refreshHard();
+        } else if (typeof AOS.refresh === 'function') {
+          AOS.refresh();
+        }
+      }
+    }, 600);
+  });
+
+  /**   * Correct scrolling position upon page load for URLs containing hash links.
    */
   window.addEventListener('load', function(e) {
     if (window.location.hash) {
