@@ -273,7 +273,9 @@ class HabitTracker {
             this.habits = data.habits.map(h => ({
                 id: h.id,
                 name: h.name,
-                completedDates: h.completedDates || [],
+                completedDates: [...new Set((h.completedDates || [])
+                    .map(dateStr => this.normalizeDateString(dateStr))
+                    .filter(Boolean))],
                 createdAt: h.created_at
             }));
             this.render();
@@ -406,6 +408,16 @@ class HabitTracker {
             String(d.getMonth() + 1).padStart(2, '0'),
             String(d.getDate()).padStart(2, '0')
         ].join('-');
+    }
+
+    normalizeDateString(dateStr) {
+        if (!dateStr) return '';
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            return dateStr;
+        }
+        const date = new Date(dateStr);
+        if (Number.isNaN(date.getTime())) return '';
+        return this.getDateString(date);
     }
 
     getToday() {

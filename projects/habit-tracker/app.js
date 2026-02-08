@@ -31,7 +31,14 @@ class HabitTracker {
     // Habit methods
     loadHabits() {
         const stored = localStorage.getItem('habits');
-        return stored ? JSON.parse(stored) : [];
+        if (!stored) return [];
+        const habits = JSON.parse(stored);
+        return habits.map(habit => ({
+            ...habit,
+            completedDates: [...new Set((habit.completedDates || [])
+                .map(dateStr => this.normalizeDateString(dateStr))
+                .filter(Boolean))]
+        }));
     }
 
     saveHabits() {
@@ -98,6 +105,16 @@ class HabitTracker {
 
     getDateString(date) {
         return date.toISOString().split('T')[0];
+    }
+
+    normalizeDateString(dateStr) {
+        if (!dateStr) return '';
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            return dateStr;
+        }
+        const date = new Date(dateStr);
+        if (Number.isNaN(date.getTime())) return '';
+        return this.getDateString(date);
     }
 
     formatDate(dateStr) {
