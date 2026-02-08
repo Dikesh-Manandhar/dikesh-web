@@ -183,26 +183,14 @@ class HabitTracker {
     calculateCurrentStreak(habit) {
         if (habit.completedDates.length === 0) return 0;
 
-        const sortedDates = habit.completedDates
-            .map(d => new Date(d))
-            .sort((a, b) => b - a);
-
+        const completedSet = new Set(habit.completedDates);
         let streak = 0;
         let currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
 
-        for (let i = 0; i <= 1; i++) {
-            const checkDate = this.getDateString(currentDate);
-            if (habit.completedDates.includes(checkDate)) {
-                streak++;
-                currentDate.setDate(currentDate.getDate() - 1);
-                i = -1; // Continue checking previous days
-            } else if (i === 0) {
-                // Check yesterday
-                currentDate.setDate(currentDate.getDate() - 1);
-            } else {
-                break;
-            }
+        while (completedSet.has(this.getDateString(currentDate))) {
+            streak++;
+            currentDate.setDate(currentDate.getDate() - 1);
         }
 
         return streak;
