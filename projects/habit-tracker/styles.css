@@ -20,6 +20,32 @@
     --level-4: #216e39;
 }
 
+body.dark-mode {
+    --primary-color: #3b82f6;
+    --primary-dark: #2563eb;
+    --success-color: #34d399;
+    --danger-color: #f87171;
+    --bg-primary: #1f2937;
+    --bg-secondary: #111827;
+    --bg-tertiary: #374151;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --border-color: #4b5563;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+    
+    /* Dark mode calendar colors */
+    --level-0: #374151;
+    --level-1: #065f46;
+    --level-2: #059669;
+    --level-3: #10b981;
+    --level-4: #34d399;
+}
+
+body.dark-mode {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -40,6 +66,36 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+    transition: background 0.3s ease;
+}
+
+.dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.dark-mode-toggle:active {
+    transform: scale(0.95);
 }
 
 .container {

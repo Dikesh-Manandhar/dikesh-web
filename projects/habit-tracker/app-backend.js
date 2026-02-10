@@ -23,12 +23,43 @@ class HabitTracker {
             return;
         }
 
+        // Initialize dark mode
+        this.initDarkMode();
+
         // Add logout button
         this.addLogoutButton();
         
         this.setupEventListeners();
         this.loadTodos();
         await this.loadHabits();
+    }
+
+    initDarkMode() {
+        const darkMode = localStorage.getItem('darkMode') === 'true';
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+            this.updateDarkModeButton(true);
+        }
+
+        const toggleBtn = document.getElementById('darkModeToggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => this.toggleDarkMode());
+        }
+    }
+
+    toggleDarkMode() {
+        const isDark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        this.updateDarkModeButton(isDark);
+    }
+
+    updateDarkModeButton(isDark) {
+        const icon = document.getElementById('darkModeIcon');
+        const text = document.getElementById('darkModeText');
+        if (icon && text) {
+            icon.textContent = isDark ? '☀️' : '🌙';
+            text.textContent = isDark ? 'Light' : 'Dark';
+        }
     }
 
     addLogoutButton() {
