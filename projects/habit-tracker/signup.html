@@ -166,6 +166,10 @@
                 </button>
             </form>
 
+            <div style="text-align: center; margin-top: 16px;">
+                <a href="tracker.html?guest=true" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem;">or <strong>Try as Guest</strong> without signing up</a>
+            </div>
+
             <div class="auth-footer">
                 Already have an account? <a href="login.html">Login</a>
             </div>
@@ -173,6 +177,15 @@
     </div>
 
     <script>
+        // Auto-redirect if already logged in
+        (function() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = 'tracker.html';
+                return;
+            }
+        })();
+
         // Get API URL - works in both local and production environments
         const getApiUrl = () => {
             const protocol = window.location.protocol;

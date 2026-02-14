@@ -351,6 +351,7 @@ app.delete('/api/todos/:id', authenticateToken, async (req, res) => {
 loadData().then(() => {
   app.listen(PORT, () => {
     console.log(`✅ Habit Tracker server running on http://localhost:${PORT}`);
+    console.log(`🏠 Landing page: http://localhost:${PORT}/index.html`);
     console.log(`📝 Login page: http://localhost:${PORT}/login.html`);
   });
 });

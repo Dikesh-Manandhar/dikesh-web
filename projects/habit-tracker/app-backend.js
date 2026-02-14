@@ -1,4 +1,4 @@
-// Habit Tracker App with Backend Integration
+// Habit Tracker App with Backend Integration & Guest Mode
 // Dynamic API URL detection
 const API_URL = (() => {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -7,31 +7,52 @@ const API_URL = (() => {
     return `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}/api`;
 })();
 
+// Detect guest mode
+const IS_GUEST = new URLSearchParams(window.location.search).get('guest') === 'true';
+
 class HabitTracker {
     constructor() {
         this.habits = [];
         this.todos = [];
+        this.isGuest = IS_GUEST;
         this.token = localStorage.getItem('token');
         this.user = JSON.parse(localStorage.getItem('user') || 'null');
         this.init();
     }
 
     async init() {
-        // Check authentication
-        if (!this.token) {
-            window.location.href = 'login.html';
+        // If not guest and no token, redirect to landing page
+        if (!this.isGuest && !this.token) {
+            window.location.href = 'index.html';
             return;
+        }
+
+        // If logged in user arrives with guest param, drop the guest mode
+        if (this.isGuest && this.token) {
+            this.isGuest = false;
         }
 
         // Initialize dark mode
         this.initDarkMode();
 
-        // Add logout button
-        this.addLogoutButton();
+        // Add header UI (logout or guest banner)
+        if (this.isGuest) {
+            this.addGuestBanner();
+        } else {
+            this.addLogoutButton();
+        }
         
         this.setupEventListeners();
-        this.loadTodos();
-        await this.loadHabits();
+
+        if (this.isGuest) {
+            this.loadGuestTodos();
+            this.loadGuestHabits();
+            this.render();
+            this.showGuestPrompt();
+        } else {
+            this.loadTodos();
+            await this.loadHabits();
+        }
     }
 
     initDarkMode() {
@@ -78,6 +99,91 @@ class HabitTracker {
 
             document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
         }
+    }
+
+    addGuestBanner() {
+        const container = document.querySelector('.container');
+        if (!container) return;
+        const header = container.querySelector('header');
+
+        // Top bar with sign up CTA
+        const guestBar = document.createElement('div');
+        guestBar.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;';
+        guestBar.innerHTML = `
+            <span style="color: rgba(255,255,255,0.85); font-size: 1rem;">👋 You're in <strong>Guest Mode</strong></span>
+            <div style="display: flex; gap: 8px;">
+                <a href="signup.html" style="padding: 8px 20px; background: white; color: var(--primary-color); border: none; border-radius: 8px; cursor: pointer; font-weight: 700; text-decoration: none; font-size: 0.9rem;">Sign Up Free</a>
+                <a href="login.html" style="padding: 8px 16px; background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.4); border-radius: 8px; cursor: pointer; font-weight: 600; text-decoration: none; font-size: 0.9rem;">Log In</a>
+            </div>
+        `;
+        header.appendChild(guestBar);
+
+        // Persistent warning banner
+        const banner = document.createElement('div');
+        banner.id = 'guestWarningBanner';
+        banner.style.cssText = 'background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; padding: 14px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 0.95rem;';
+        banner.innerHTML = `
+            <div>
+                <strong>⚠️ Guest Mode:</strong> Your habits and todos are stored locally and will be lost if you clear your browser data.
+                <a href="signup.html" style="color: #92400e; font-weight: 700; text-decoration: underline;">Create a free account</a> to save them permanently!
+            </div>
+            <button onclick="this.parentElement.style.display='none'" style="background: none; border: none; color: #92400e; font-size: 1.2rem; cursor: pointer; padding: 0 4px;">✕</button>
+        `;
+        container.insertBefore(banner, container.children[1]);
+    }
+
+    showGuestPrompt() {
+        // Show a gentle popup after 30 seconds of usage
+        this._guestPromptTimeout = setTimeout(() => {
+            if (!this.isGuest) return;
+            const overlay = document.createElement('div');
+            overlay.id = 'guestPromptOverlay';
+            overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px;';
+            overlay.innerHTML = `
+                <div style="background: white; border-radius: 16px; padding: 36px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+                    <div style="font-size: 3rem; margin-bottom: 12px;">💡</div>
+                    <h2 style="color: #111827; margin-bottom: 12px; font-size: 1.4rem;">Enjoying the Habit Tracker?</h2>
+                    <p style="color: #6b7280; margin-bottom: 24px; line-height: 1.6;">
+                        Create a free account to <strong>save your habits permanently</strong>, access them from any device, and never lose your streaks!
+                    </p>
+                    <a href="signup.html" style="display: block; padding: 14px; background: #2563eb; color: white; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 1.05rem; margin-bottom: 12px;">Sign Up — It's Free</a>
+                    <button id="dismissGuestPrompt" style="background: none; border: none; color: #6b7280; cursor: pointer; font-size: 0.95rem; padding: 8px;">Maybe later</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            document.getElementById('dismissGuestPrompt').addEventListener('click', () => {
+                overlay.remove();
+            });
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.remove();
+            });
+        }, 30000);
+    }
+
+    // Guest mode localStorage methods
+    loadGuestHabits() {
+        const stored = localStorage.getItem('guest_habits');
+        if (!stored) { this.habits = []; return; }
+        this.habits = JSON.parse(stored).map(habit => ({
+            ...habit,
+            completedDates: [...new Set((habit.completedDates || [])
+                .map(dateStr => this.normalizeDateString(dateStr))
+                .filter(Boolean))]
+        }));
+    }
+
+    saveGuestHabits() {
+        localStorage.setItem('guest_habits', JSON.stringify(this.habits));
+    }
+
+    loadGuestTodos() {
+        const stored = localStorage.getItem('guest_todos');
+        this.todos = stored ? JSON.parse(stored) : [];
+        this.renderTodos();
+    }
+
+    saveGuestTodos() {
+        localStorage.setItem('guest_todos', JSON.stringify(this.todos));
     }
 
     setupEventListeners() {
@@ -163,6 +269,19 @@ class HabitTracker {
             return;
         }
 
+        if (this.isGuest) {
+            this.todos.push({
+                id: String(Date.now()),
+                text,
+                completed: false,
+                createdAt: new Date().toISOString()
+            });
+            input.value = '';
+            this.saveGuestTodos();
+            this.renderTodos();
+            return;
+        }
+
         try {
             const response = await fetch(`${API_URL}/todos`, {
                 method: 'POST',
@@ -199,6 +318,13 @@ class HabitTracker {
         const todo = this.todos.find(t => t.id === todoId);
         if (!todo) return;
 
+        if (this.isGuest) {
+            todo.completed = !todo.completed;
+            this.saveGuestTodos();
+            this.renderTodos();
+            return;
+        }
+
         try {
             const response = await fetch(`${API_URL}/todos/${todoId}`, {
                 method: 'PUT',
@@ -221,6 +347,14 @@ class HabitTracker {
 
     async deleteTodo(id) {
         const todoId = String(id);
+
+        if (this.isGuest) {
+            this.todos = this.todos.filter(t => t.id !== todoId);
+            this.saveGuestTodos();
+            this.renderTodos();
+            return;
+        }
+
         try {
             const response = await fetch(`${API_URL}/todos/${todoId}`, {
                 method: 'DELETE',
@@ -325,6 +459,19 @@ class HabitTracker {
             return;
         }
 
+        if (this.isGuest) {
+            this.habits.push({
+                id: Date.now(),
+                name,
+                completedDates: [],
+                createdAt: new Date().toISOString()
+            });
+            input.value = '';
+            this.saveGuestHabits();
+            this.render();
+            return;
+        }
+
         try {
             const response = await fetch(`${API_URL}/habits`, {
                 method: 'POST',
@@ -361,6 +508,13 @@ class HabitTracker {
             return;
         }
 
+        if (this.isGuest) {
+            this.habits = this.habits.filter(h => h.id !== id && String(h.id) !== String(id));
+            this.saveGuestHabits();
+            this.render();
+            return;
+        }
+
         try {
             const response = await fetch(`${API_URL}/habits/${id}`, {
                 method: 'DELETE',
@@ -383,6 +537,20 @@ class HabitTracker {
     }
 
     async toggleDate(habitId, dateStr) {
+        if (this.isGuest) {
+            const habit = this.habits.find(h => h.id == habitId);
+            if (!habit) return;
+            const index = habit.completedDates.indexOf(dateStr);
+            if (index > -1) {
+                habit.completedDates.splice(index, 1);
+            } else {
+                habit.completedDates.push(dateStr);
+            }
+            this.saveGuestHabits();
+            this.render();
+            return;
+        }
+
         try {
             const response = await fetch(`${API_URL}/habits/${habitId}/toggle`, {
                 method: 'POST',
@@ -413,10 +581,22 @@ class HabitTracker {
 
     async markToday(habitId) {
         const today = this.getDateString(this.getToday());
+        if (this.isGuest) {
+            const habit = this.habits.find(h => h.id == habitId);
+            if (!habit) return;
+            if (!habit.completedDates.includes(today)) {
+                habit.completedDates.push(today);
+                this.saveGuestHabits();
+                this.render();
+            }
+            return;
+        }
         await this.toggleDate(habitId, today);
     }
 
     async logout() {
+        if (this._guestPromptTimeout) clearTimeout(this._guestPromptTimeout);
+
         try {
             await fetch(`${API_URL}/logout`, {
                 method: 'POST',
@@ -428,7 +608,8 @@ class HabitTracker {
         
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = 'login.html';
+        localStorage.removeItem('sessionOnly');
+        window.location.href = 'index.html';
     }
 
     // Use local dates to avoid timezone shifting to previous/next day

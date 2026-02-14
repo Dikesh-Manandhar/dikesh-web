@@ -136,10 +136,19 @@
                     <input type="password" id="password" name="password" required>
                 </div>
 
+                <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="rememberMe" name="rememberMe" checked style="width: auto;">
+                    <label for="rememberMe" style="margin-bottom: 0; font-weight: 500; cursor: pointer;">Remember me</label>
+                </div>
+
                 <button type="submit" class="auth-button" id="loginButton">
                     Login
                 </button>
             </form>
+
+            <div style="text-align: center; margin-top: 16px;">
+                <a href="tracker.html?guest=true" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem;">or <strong>Try as Guest</strong> without signing in</a>
+            </div>
 
             <div class="auth-footer">
                 Don't have an account? <a href="signup.html">Sign up</a>
@@ -148,6 +157,15 @@
     </div>
 
     <script>
+        // Auto-redirect if already logged in
+        (function() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = 'tracker.html';
+                return;
+            }
+        })();
+
         // Get API URL - works in both local and production environments
         const getApiUrl = () => {
             const protocol = window.location.protocol;
@@ -189,8 +207,18 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                    const rememberMe = document.getElementById('rememberMe').checked;
+                    if (rememberMe) {
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                    } else {
+                        sessionStorage.setItem('token', data.token);
+                        sessionStorage.setItem('user', JSON.stringify(data.user));
+                        // Also set in localStorage temporarily for page navigation
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        localStorage.setItem('sessionOnly', 'true');
+                    }
                     window.location.href = 'tracker.html';
                 } else {
                     errorMessage.textContent = data.error || 'Login failed';

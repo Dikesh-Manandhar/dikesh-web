@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker - Build Better Habits</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .landing-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .landing-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.1));
+            pointer-events: none;
+        }
+
+        .landing-logo {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: bounceIn 0.8s ease;
+        }
+
+        .landing-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .landing-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 500px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .landing-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+
+        .btn-primary {
+            padding: 16px 36px;
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            padding: 16px 36px;
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.6);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: white;
+            transform: translateY(-2px);
+        }
+
+        .landing-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            max-width: 900px;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 28px 24px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.5;
+        }
+
+        .landing-footer {
+            text-align: center;
+            padding: 32px 20px;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+        }
+
+        .landing-footer a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+        }
+
+        .landing-footer a:hover {
+            color: white;
+        }
+
+        .guest-note {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.85rem;
+            margin-top: -24px;
+            margin-bottom: 40px;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .landing-title { font-size: 2rem; }
+            .landing-subtitle { font-size: 1rem; }
+            .btn-primary, .btn-secondary { padding: 14px 28px; font-size: 1rem; width: 100%; text-align: center; }
+            .landing-cta { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-hero">
+        <div class="landing-logo">🎯</div>
+        <h1 class="landing-title">Build Better Habits</h1>
+        <p class="landing-subtitle">
+            Track your daily habits, build streaks, and transform your life — one day at a time. Simple, visual, and effective.
+        </p>
+
+        <div class="landing-cta">
+            <a href="tracker.html?guest=true" class="btn-primary">Try It Free →</a>
+            <a href="signup.html" class="btn-secondary">Create Account</a>
+        </div>
+        <p class="guest-note">No account needed to try — sign up later to save your progress</p>
+
+        <div class="landing-features">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Visual Tracking</div>
+                <div class="feature-desc">Beautiful calendar heatmaps show your progress at a glance, just like GitHub contributions.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔥</div>
+                <div class="feature-title">Streak Counter</div>
+                <div class="feature-desc">Stay motivated with current and longest streak tracking. Don't break the chain!</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <div class="feature-title">Todo List</div>
+                <div class="feature-desc">Manage daily tasks alongside your habits. Everything you need in one place.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="landing-footer">
+        <p>Already have an account? <a href="login.html"><strong>Log in</strong></a></p>
+    </div>
+
+    <script>
+        // Auto-redirect if already logged in
+        (function() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = 'tracker.html';
+            }
+        })();
+    </script>
+</body>
+</html>
