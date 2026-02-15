@@ -118,18 +118,7 @@ class HabitTracker {
         `;
         header.appendChild(guestBar);
 
-        // Persistent warning banner
-        const banner = document.createElement('div');
-        banner.id = 'guestWarningBanner';
-        banner.style.cssText = 'background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; padding: 14px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 0.95rem;';
-        banner.innerHTML = `
-            <div>
-                <strong>⚠️ Guest Mode:</strong> Your habits and todos are stored locally and will be lost if you clear your browser data.
-                <a href="signup.html" style="color: #92400e; font-weight: 700; text-decoration: underline;">Create a free account</a> to save them permanently!
-            </div>
-            <button onclick="this.parentElement.style.display='none'" style="background: none; border: none; color: #92400e; font-size: 1.2rem; cursor: pointer; padding: 0 4px;">✕</button>
-        `;
-        container.insertBefore(banner, container.children[1]);
+
     }
 
     showGuestPrompt() {
