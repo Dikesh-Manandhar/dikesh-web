@@ -9,7 +9,7 @@ const path = require('path');
 
 const app = express();
 
-// Trust Railway proxy for rate limiting and IP detection
+// Trust reverse proxy (Render, Railway, etc.) for rate limiting and IP detection
 app.set('trust proxy', 1);
 
 const PORT = process.env.PORT || 3000;
@@ -20,9 +20,9 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
-const mongoUrl = process.env.MONGO_URL || process.env.MONGO_PUBLIC_URL;
+const mongoUrl = process.env.MONGO_URL || process.env.MONGO_PUBLIC_URL || process.env.MONGODB_URI;
 if (!mongoUrl) {
-  console.error('❌ MONGO_URL is not set. Please configure your MongoDB connection string.');
+  console.error('❌ MONGO_URL / MONGODB_URI is not set. Please configure your MongoDB connection string.');
   process.exit(1);
 }
 
@@ -436,11 +436,12 @@ app.delete('/api/todos/:id', authenticateToken, async (req, res) => {
 mongoose
   .connect(mongoUrl, {
     dbName: process.env.MONGO_DB_NAME || 'habit_tracker',
-    serverSelectionTimeoutMS: 5000
+    serverSelectionTimeoutMS: 10000,
+    retryWrites: true
   })
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`✅ Habit Tracker server running on http://localhost:${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`✅ Habit Tracker server running on port ${PORT}`);
       console.log('🗄️  Connected to MongoDB');
     });
   })
