@@ -1,0 +1,21 @@
+/* Local fallback styles for the exported portfolio page.
+   Keep these minimal so the original 10Web styling remains dominant. */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent rare horizontal overflow on very small devices */
+@media (max-width: 767px) {
+  .footer-wrapper {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
