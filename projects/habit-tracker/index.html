@@ -181,6 +181,11 @@
     </style>
 </head>
 <body>
+    <button class="dark-mode-toggle" id="darkModeToggle" type="button">
+        <span id="darkModeIcon">☀️</span>
+        <span id="darkModeText">Light</span>
+    </button>
+
     <div class="landing-hero">
         <div class="landing-logo">🎯</div>
         <h1 class="landing-title">Build Better Habits</h1>
@@ -218,6 +223,37 @@
     </div>
 
     <script>
+        const updateThemeToggle = (isDark) => {
+            const icon = document.getElementById('darkModeIcon');
+            const text = document.getElementById('darkModeText');
+            if (!icon || !text) return;
+            icon.textContent = isDark ? '☀️' : '🌙';
+            text.textContent = isDark ? 'Light' : 'Dark';
+        };
+
+        const applyThemePreference = () => {
+            const storedPreference = localStorage.getItem('darkMode');
+            const isDark = storedPreference === null ? true : storedPreference === 'true';
+            if (storedPreference === null) {
+                localStorage.setItem('darkMode', 'true');
+            }
+            document.body.classList.toggle('dark-mode', isDark);
+            updateThemeToggle(isDark);
+        };
+
+        const toggleTheme = () => {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', String(isDark));
+            updateThemeToggle(isDark);
+        };
+
+        applyThemePreference();
+
+        const toggleBtn = document.getElementById('darkModeToggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', toggleTheme);
+        }
+
         // Auto-redirect if already logged in
         (function() {
             const token = localStorage.getItem('token');

@@ -56,7 +56,12 @@ class HabitTracker {
     }
 
     initDarkMode() {
-        const darkMode = localStorage.getItem('darkMode') === 'true';
+        const storedPreference = localStorage.getItem('darkMode');
+        const darkMode = storedPreference === null ? true : storedPreference === 'true';
+        if (storedPreference === null) {
+            localStorage.setItem('darkMode', 'true');
+        }
+
         if (darkMode) {
             document.body.classList.add('dark-mode');
             this.updateDarkModeButton(true);
