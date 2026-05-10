@@ -26,6 +26,31 @@ if (!mongoUrl) {
   process.exit(1);
 }
 
+const mongoOptions = {
+  dbName: process.env.MONGO_DB_NAME || 'habit_tracker',
+  serverSelectionTimeoutMS: 10000,
+  retryWrites: true
+};
+
+let connectPromise = null;
+
+async function connectToMongo() {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
+  if (!connectPromise) {
+    connectPromise = mongoose.connect(mongoUrl, mongoOptions).then((m) => m.connection);
+  }
+
+  try {
+    return await connectPromise;
+  } catch (error) {
+    connectPromise = null;
+    throw error;
+  }
+}
+
 const DEFAULT_ORIGINS = ['http://localhost:3000', 'http://localhost:8000'];
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
   .split(',')
@@ -433,19 +458,18 @@ app.delete('/api/todos/:id', authenticateToken, async (req, res) => {
   }
 });
 
-mongoose
-  .connect(mongoUrl, {
-    dbName: process.env.MONGO_DB_NAME || 'habit_tracker',
-    serverSelectionTimeoutMS: 10000,
-    retryWrites: true
-  })
-  .then(() => {
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`✅ Habit Tracker server running on port ${PORT}`);
-      console.log('🗄️  Connected to MongoDB');
+if (require.main === module) {
+  connectToMongo()
+    .then(() => {
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log(`✅ Habit Tracker server running on port ${PORT}`);
+        console.log('🗄️  Connected to MongoDB');
+      });
+    })
+    .catch((error) => {
+      console.error('❌ Failed to connect to MongoDB:', error.message);
+      process.exit(1);
     });
-  })
-  .catch((error) => {
-    console.error('❌ Failed to connect to MongoDB:', error.message);
-    process.exit(1);
-  });
+}
+
+module.exports = { app, connectToMongo };

@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/tracker",
+      "destination": "/tracker.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/signup",
+      "destination": "/signup.html"
+    }
+  ]
+}
