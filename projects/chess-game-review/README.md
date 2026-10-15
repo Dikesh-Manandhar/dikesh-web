@@ -4,7 +4,7 @@ A lightweight chess-board and PGN-review interface that runs Stockfish locally i
 
 ## Run it
 
-From this directory, serve the files rather than opening `index.html` directly:
+From this directory:
 
 ```bash
 python3 -m http.server 8000
