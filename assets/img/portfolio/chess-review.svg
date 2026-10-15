@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Pawn Review chess analysis</title>
+  <desc id="desc">A chess board with a highlighted analysis arrow.</desc>
+  <rect width="1200" height="800" fill="#101820"/>
+  <rect x="170" y="80" width="640" height="640" rx="18" fill="#f0d9b5"/>
+  <g fill="#b58863">
+    <path d="M170 80h80v80h-80zM330 80h80v80h-80zM490 80h80v80h-80zM650 80h80v80h-80zM250 160h80v80h-80zM410 160h80v80h-80zM570 160h80v80h-80zM730 160h80v80h-80zM170 240h80v80h-80zM330 240h80v80h-80zM490 240h80v80h-80zM650 240h80v80h-80zM250 320h80v80h-80zM410 320h80v80h-80zM570 320h80v80h-80zM730 320h80v80h-80zM170 400h80v80h-80zM330 400h80v80h-80zM490 400h80v80h-80zM650 400h80v80h-80zM250 480h80v80h-80zM410 480h80v80h-80zM570 480h80v80h-80zM730 480h80v80h-80zM170 560h80v80h-80zM330 560h80v80h-80zM490 560h80v80h-80zM650 560h80v80h-80zM250 640h80v80h-80zM410 640h80v80h-80zM570 640h80v80h-80zM730 640h80v80h-80z"/>
+  </g>
+  <text x="260" y="280" font-size="150" fill="#fff" font-family="Georgia,serif">♞</text>
+  <text x="600" y="600" font-size="150" fill="#101820" font-family="Georgia,serif">♔</text>
+  <path d="M900 230v280M900 230l-28 42M900 230l28 42" fill="none" stroke="#e45f38" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="870" y="610" fill="#f0d9b5" font-family="Arial,sans-serif" font-size="42" font-weight="700">PAWN REVIEW</text>
+</svg>

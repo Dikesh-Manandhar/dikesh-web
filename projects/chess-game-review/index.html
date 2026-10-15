@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pawn Review — Chess analysis</title>
+    <link rel="stylesheet" href="./styles.css?v=ui-20261015-3" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <p class="eyebrow">STOCKFISH-POWERED REVIEW</p>
+        <h1>See the moves<br /><em>you almost found.</em></h1>
+        <p class="lede">Paste a PGN or play through a position. Pawn Review uses Stockfish to surface the best line and the turning points.</p>
+      </section>
+
+      <section class="workspace">
+        <div class="board-area">
+          <div id="gameClocks" class="game-clocks" hidden>
+            <div class="player-clock black-clock"><span class="clock-player"><span class="clock-icon" aria-hidden="true">◷</span><span id="blackPlayerName">Black</span></span><span id="blackCaptured" class="captured-pieces"></span><span id="blackAdvantage" class="material-advantage">+0</span><strong id="blackClock">--:--</strong></div>
+          </div>
+          <div class="board-with-eval">
+            <div id="board" class="board" aria-label="Chess board"></div>
+            <div class="eval-rail" aria-label="Position evaluation">
+              <div id="evalFill" class="eval-fill"></div>
+              <strong id="evalRailScore" class="eval-rail-score">+0.00</strong>
+            </div>
+          </div>
+          <div id="whiteClockBar" class="game-clocks white-clock-bar" hidden>
+            <div class="player-clock white-clock"><span class="clock-player"><span class="clock-icon" aria-hidden="true">◷</span><span id="whitePlayerName">White</span></span><span id="whiteCaptured" class="captured-pieces"></span><span id="whiteAdvantage" class="material-advantage">+0</span><strong id="whiteClock">--:--</strong></div>
+          </div>
+          <div class="board-tools">
+            <button id="prevBtn" class="move-nav-button" disabled>← Previous move</button>
+            <button id="nextBtn" class="move-nav-button" disabled>Next move →</button>
+            <span class="board-tool-divider" aria-hidden="true"></span>
+            <button id="undoBtn" class="text-button" disabled>← Undo</button>
+            <button id="redoBtn" class="text-button" disabled>Redo →</button>
+            <button id="resumeReviewBtn" class="text-button resume-review" hidden>↩ Resume review</button>
+            <button id="flipBtn" class="text-button">↻ Flip board</button>
+            <button id="arrowToggleBtn" class="text-button" aria-pressed="true">↗ Hide best move</button>
+            <button id="resetBtn" class="text-button">x Reset position</button>
+
+          </div>
+        </div>
+
+        <aside class="review-panel">
+          <div class="panel-heading">
+            <div><p class="label">POSITION REVIEW</p><h2 id="positionLabel">Starting position</h2></div>
+            <span id="engineDot" class="engine-dot" title="Engine loading"></span>
+          </div>
+
+          <div class="evaluation">
+            <div><p class="label">EVALUATION</p><strong id="evaluation">+0.00</strong><span id="evaluationNote"> Equal</span></div>
+          </div>
+
+          <div class="best-line">
+            <p class="label">BEST CONTINUATION</p>
+            <p id="principalVariation">Start an analysis to see Stockfish’s line.</p>
+          </div>
+          <div class="move-insight">
+            <span id="moveLabel" class="move-label neutral">POSITION</span>
+            <span id="bookMoveIcon" class="book-move-icon" title="Opening book move" aria-label="Opening book move" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5v-17Z"></path><path d="M4 4.5v15A2.5 2.5 0 0 1 6.5 17H20M8 6h8M8 9h8"></path></svg>
+            </span>
+            <p id="moveInsight">The arrow marks Stockfish’s first choice.</p>
+            <button id="bookBtn" class="text-button">Check opening book</button>
+          </div>
+
+          <details id="gameSummary" class="game-summary" open hidden>
+            <summary>GAME SUMMARY</summary>
+            <div id="summaryBody"></div>
+          </details>
+
+          <div class="actions">
+            <button id="analyzeBtn" class="primary">Refresh analysis <span>⌘↵</span></button>
+            <label class="depth-control">Depth <output id="depthValue">14</output><input id="depth" type="range" min="8" max="20" value="14" /></label>
+          </div>
+          <p id="engineStatus" class="status">Loading local Stockfish engine…</p>
+        </aside>
+      </section>
+
+      <section class="import-section">
+        <div><p class="label">CHESS.COM IMPORT</p><h2>Bring in recent games</h2><p>Enter a public Chess.com username. We’ll fetch the newest monthly archive and show its latest games.</p></div>
+        <div class="chesscom-controls">
+          <div class="username-row"><input id="chesscomUsername" autocomplete="off" placeholder="Chess.com username" /><button id="fetchChesscomBtn" class="secondary">Find games</button></div>
+          <div id="chesscomGames" class="remote-games" aria-live="polite"></div>
+          <p id="chesscomStatus" class="status"></p>
+        </div>
+      </section>
+
+      <section class="import-section">
+        <div><p class="label">LICHESS IMPORT</p><h2>Bring in recent games</h2><p>Enter a public Lichess username. We’ll fetch the latest games from the public Lichess game export.</p></div>
+        <div class="chesscom-controls">
+          <div class="username-row"><input id="lichessUsername" autocomplete="off" placeholder="Lichess username" /><button id="fetchLichessBtn" class="secondary">Find games</button></div>
+          <div id="lichessGames" class="remote-games" aria-live="polite"></div>
+          <p id="lichessStatus" class="status"></p>
+        </div>
+      </section>
+
+      <section class="pgn-section">
+        <div><p class="label">GAME IMPORT</p><h2>Review a complete game</h2><p>Paste standard PGN, load it, then step through each move and analyze any position.</p></div>
+        <div class="pgn-controls">
+          <textarea id="pgnInput" placeholder="1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 …"></textarea>
+          <div><button id="loadPgnBtn" class="secondary">Load PGN</button></div>
+          <p id="gameStatus" class="status"></p>
+        </div>
+      </section>
+
+      <section id="reviewSection" class="move-review" hidden>
+        <div class="review-title"><div><p class="label">PLY-BY-PLY REVIEW</p><h2>Every move, ready for you</h2></div><p id="reviewFilterNote" class="filter-note" hidden></p></div>
+        <p class="review-explainer">After a PGN is loaded, every move is analyzed automatically. Each item records the move played, Stockfish’s best move, and the win-probability pawn loss.</p>
+        <ol id="reviewList" class="review-list"></ol>
+      </section>
+    </main>
+    <script type="module" src="./app.js?v=ui-20261015-3"></script>
+  </body>
+</html>
