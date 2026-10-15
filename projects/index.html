@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Projects by Dikesh Manandhar, including web apps, AI tools, productivity apps, and chess analysis.">
+  <title>Projects | Dikesh Manandhar</title>
+  <link href="../assets/img/favicon.png" rel="icon">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Raleway:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/css/main.css" rel="stylesheet">
+  <style>
+    .projects-page {
+      padding: 72px 8% 64px;
+    }
+    .projects-intro {
+      max-width: 720px;
+      margin-bottom: 42px;
+    }
+    .projects-intro h1 {
+      margin-bottom: 16px;
+    }
+    .project-card {
+      height: 100%;
+      overflow: hidden;
+      background: var(--surface-color);
+      border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px color-mix(in srgb, var(--default-color), transparent 92%);
+    }
+    .project-card img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+    }
+    .project-card-body {
+      display: flex;
+      flex-direction: column;
+      min-height: 205px;
+      padding: 24px;
+    }
+    .project-card h2 {
+      font-size: 21px;
+      margin-bottom: 10px;
+    }
+    .project-card p {
+      flex: 1;
+      margin-bottom: 22px;
+    }
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+    .projects-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    @media (max-width: 1199px) {
+      .projects-page {
+        padding: 48px 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="projects-page">
+    <div class="container-fluid">
+      <a class="projects-back" href="../"><i class="bi bi-arrow-left"></i> Back to portfolio</a>
+      <div class="projects-intro">
+        <p class="eyebrow text-uppercase">My work</p>
+        <h1>Projects</h1>
+        <p>Explore my web applications, AI experiments, productivity tools, and interactive projects. Each project is available to try or inspect through its source code.</p>
+      </div>
+
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6">
+          <article class="project-card">
+            <img src="../assets/img/portfolio/chess-review.svg" alt="Chess board with analysis highlights">
+            <div class="project-card-body">
+              <h2>Pawn Review</h2>
+              <p>A browser-based chess game reviewer using Stockfish to analyze PGN games, opening theory, accuracy, and move quality.</p>
+              <a class="project-link" href="chess-game-review/">Open project <i class="bi bi-arrow-up-right"></i></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+          <article class="project-card">
+            <img src="../assets/img/portfolio/Habit_tracker.jpeg" alt="Habit Tracker app interface">
+            <div class="project-card-body">
+              <h2>Habit Tracker App</h2>
+              <p>Track daily habits, build streaks, and monitor progress with a focused productivity experience.</p>
+              <a class="project-link" href="https://dikesh-web-sigma.vercel.app/index.html" target="_blank" rel="noopener">Try it live <i class="bi bi-box-arrow-up-right"></i></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+          <article class="project-card">
+            <img src="../assets/img/portfolio/medicare.png" alt="Medicare AI platform">
+            <div class="project-card-body">
+              <h2>Medicare AI</h2>
+              <p>An AI-powered clinical platform for automated documentation and real-time patient insights.</p>
+              <a class="project-link" href="https://medicare-pi-inky.vercel.app" target="_blank" rel="noopener">View live project <i class="bi bi-box-arrow-up-right"></i></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+          <article class="project-card">
+            <img src="../assets/img/portfolio/weather.webp" alt="Weather app">
+            <div class="project-card-body">
+              <h2>Weather App</h2>
+              <p>A weather application that delivers current conditions and forecasts using an external API.</p>
+              <a class="project-link" href="https://github.com/Dikesh-Manandhar/python/blob/main/weather.py" target="_blank" rel="noopener">View source code <i class="bi bi-github"></i></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+          <article class="project-card">
+            <img src="../assets/img/portfolio/Task.webp" alt="Task manager interface">
+            <div class="project-card-body">
+              <h2>Task Manager</h2>
+              <p>A simple task manager for adding, removing, and viewing tasks while staying organized.</p>
+              <a class="project-link" href="https://github.com/Dikesh-Manandhar/python" target="_blank" rel="noopener">View source code <i class="bi bi-github"></i></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+          <article class="project-card">
+            <img src="../assets/img/portfolio/Web.png" alt="Personal portfolio website">
+            <div class="project-card-body">
+              <h2>Personal Portfolio</h2>
+              <p>This portfolio website showcasing my development work, technical interests, certificates, and experience.</p>
+              <a class="project-link" href="../">Visit portfolio <i class="bi bi-arrow-up-right"></i></a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
