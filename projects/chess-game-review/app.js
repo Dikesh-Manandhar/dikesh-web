@@ -320,15 +320,23 @@ async function analyzeAllPlies() {
   reviewAnalysisRunning=true;
   try {
     const depth=Math.min(12,Number($('#depth').value)), positions=[reviews[0].fenBefore,...reviews.map(record=>record.fenAfter)];
+    await bookReady;
+    if (bookData) markBook(reviews, bookData);
+    const bookRecordsByBefore=new Map(reviews.filter((record)=>record.book).map((record)=>[record.fenBefore,record]));
+    const nextBookRecordsByAfter=new Map(reviews.filter((record,index)=>reviews[index + 1]?.book).map((record,index)=>[record.fenAfter,reviews[index + 1]]));
     const evaluations = new Map();
     for (let i=0;i<positions.length;i++) {
       $('#engineStatus').textContent=`Analyzing position ${i+1}/${positions.length}…`;
       const fen=positions[i];
+      const bookRecord=bookRecordsByBefore.get(fen) || nextBookRecordsByAfter.get(fen);
+      if (bookRecord) {
+        evaluations.set(fen,{ value:0, display:'+0.00', note:' Opening book', pv:'', bestMoveUci:bookRecord.uci, secondValue:null });
+        continue;
+      }
       evaluations.set(fen, await engineSearch(fen,depth,false,2));
     }
-    await bookReady;
     for (const record of reviews) { const before=evaluations.get(record.fenBefore), after=evaluations.get(record.fenAfter); record.bestMoveUci=before.bestMoveUci; record.bestMoveSan=uciToSan(record.fenBefore,before.bestMoveUci); record.evalBefore=before.value; record.evalAfter=after.value; record.secondValue=before.secondValue ?? null; record.afterPv=after.pv || ''; record.lossPawns=record.uci === before.bestMoveUci ? 0 : Math.max(0,record.color==='w' ? before.value-after.value : after.value-before.value); }
-    markBook(reviews, bookData);
+    $('#engineStatus').textContent='Finishing move labels…';
     for (const record of reviews) { record.brilliant=isBrilliant(record,Chess); record.great=!record.brilliant && isGreat(record); }
     renderReviewList();
     $('#engineStatus').textContent='Every ply has been reviewed.'; rebuildAt(original);
