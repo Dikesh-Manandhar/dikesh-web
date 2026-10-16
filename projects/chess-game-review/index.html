@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pawn Review — Chess analysis</title>
-    <link rel="stylesheet" href="./styles.css?v=ui-20261015-3" />
+    <link rel="stylesheet" href="./styles.css?v=ui-20261016-1" />
   </head>
   <body>
     <main class="app-shell">
@@ -24,6 +24,11 @@
             <div class="eval-rail" aria-label="Position evaluation">
               <div id="evalFill" class="eval-fill"></div>
               <strong id="evalRailScore" class="eval-rail-score">+0.00</strong>
+            </div>
+            <div id="analysisOverlay" class="analysis-overlay" role="status" aria-live="polite" hidden>
+              <span class="analysis-spinner" aria-hidden="true"></span>
+              <strong>Analyzing game<span class="analysis-dots" aria-hidden="true"></span></strong>
+              <small id="analysisProgress">Preparing Stockfish…</small>
             </div>
           </div>
           <div id="whiteClockBar" class="game-clocks white-clock-bar" hidden>
@@ -112,6 +117,6 @@
         <ol id="reviewList" class="review-list"></ol>
       </section>
     </main>
-    <script type="module" src="./app.js?v=ui-20261015-3"></script>
+    <script type="module" src="./app.js?v=ui-20261016-1"></script>
   </body>
 </html>

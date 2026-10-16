@@ -15,6 +15,12 @@ let reviewFilter = null;
 let bookData = null;
 const bookReady = fetch('./data/opening-book.json').then((response) => response.ok ? response.json() : null).then((data) => { bookData = data; }).catch(() => {});
 const esc = (text) => String(text).replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+function setAnalysisOverlay(visible, progress='Preparing Stockfish…') {
+  const overlay=$('#analysisOverlay');
+  if (!overlay) return;
+  overlay.hidden=!visible;
+  $('#analysisProgress').textContent=progress;
+}
 
 function soundKind(move) {
   if (chess.isCheckmate()) return 'mate';
@@ -221,7 +227,7 @@ function initEngine() {
         pumpSearchQueue();
       }
     };
-    engine.onerror=() => { $('#engineStatus').textContent='Engine could not load. Serve this folder from a local web server, then try again.'; };
+    engine.onerror=() => { setAnalysisOverlay(false); $('#engineStatus').textContent='Engine could not load. Serve this folder from a local web server, then try again.'; };
     engine.postMessage('uci');
   } catch (_) { $('#engineStatus').textContent='Your browser does not support the local engine.'; }
 }
@@ -314,6 +320,7 @@ function loadGameFromPgn(pgn, name='', players=null) {
 }
 async function analyzeAllPlies() {
   if (!reviews.length) return;
+  setAnalysisOverlay(true);
   if (!engineReady) { pendingReviewAnalysis=true; $('#engineStatus').textContent='Waiting for Stockfish to load before reviewing every move…'; return; }
   pendingReviewAnalysis=false;
   const original=historyIndex;
@@ -326,7 +333,9 @@ async function analyzeAllPlies() {
     const nextBookRecordsByAfter=new Map(reviews.filter((record,index)=>reviews[index + 1]?.book).map((record,index)=>[record.fenAfter,reviews[index + 1]]));
     const evaluations = new Map();
     for (let i=0;i<positions.length;i++) {
-      $('#engineStatus').textContent=`Analyzing position ${i+1}/${positions.length}…`;
+      const progress=`Analyzing position ${i+1} of ${positions.length}…`;
+      $('#engineStatus').textContent=progress;
+      setAnalysisOverlay(true, progress);
       const fen=positions[i];
       const bookRecord=bookRecordsByBefore.get(fen) || nextBookRecordsByAfter.get(fen);
       if (bookRecord) {
@@ -337,10 +346,11 @@ async function analyzeAllPlies() {
     }
     for (const record of reviews) { const before=evaluations.get(record.fenBefore), after=evaluations.get(record.fenAfter); record.bestMoveUci=before.bestMoveUci; record.bestMoveSan=uciToSan(record.fenBefore,before.bestMoveUci); record.evalBefore=before.value; record.evalAfter=after.value; record.secondValue=before.secondValue ?? null; record.afterPv=after.pv || ''; record.lossPawns=record.uci === before.bestMoveUci ? 0 : Math.max(0,record.color==='w' ? before.value-after.value : after.value-before.value); }
     $('#engineStatus').textContent='Finishing move labels…';
+    setAnalysisOverlay(true,'Finishing move labels…');
     for (const record of reviews) { record.brilliant=isBrilliant(record,Chess); record.great=!record.brilliant && isGreat(record); }
     renderReviewList();
     $('#engineStatus').textContent='Every ply has been reviewed.'; rebuildAt(original);
-  } catch(e) { $('#engineStatus').textContent=e.message; } finally { reviewAnalysisRunning=false; }
+  } catch(e) { $('#engineStatus').textContent=e.message; } finally { reviewAnalysisRunning=false; setAnalysisOverlay(false); }
 }
 async function checkOpeningBook() {
   $('#bookBtn').textContent='Checking book…'; await bookReady;
